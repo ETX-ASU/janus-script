@@ -48,7 +48,7 @@ export class FunctionObj implements EnvObj {
     }
 
     toJS() {
-        return () => {}; // not sure if we can do this?
+        return () => null; // not sure if we can do this?
     }
 
     Equals(obj: EnvObj) {

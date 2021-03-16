@@ -17,5 +17,5 @@ export interface EnvObj {
     Inspect(): string;
     Equals(obj: EnvObj): boolean;
     toJSON(): string;
-    toJS(): any;
+    toJS();
 }

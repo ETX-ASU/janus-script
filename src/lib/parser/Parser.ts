@@ -11,14 +11,13 @@ import { IfExpression } from '../ast/IfExpression';
 import { IndexExpression } from '../ast/IndexExpression';
 import { InfixExpression } from '../ast/InfixExpression';
 import { LetStatement } from '../ast/LetStatement';
+import { Expression } from '../ast/node';
 import { NumberLiteral } from '../ast/NumberLiteral';
 import { PrefixExpression } from '../ast/PrefixExpression';
+import { Program } from '../ast/Program';
 import { ReturnStatement } from '../ast/ReturnStatement';
 import { StringLiteral } from '../ast/StringLiteral';
-import { Expression } from '../ast/node';
-import { Program } from '../ast/Program';
 import { Token, TokenType } from '../lexer/tokens';
-
 import {
     infixParseFn,
     OperatorPrecedence,
@@ -144,7 +143,7 @@ export class Parser {
     }
 
     private expectPeek(type: TokenType | TokenType[]): boolean {
-        let types: TokenType[] = Array.isArray(type) ? type : [type];
+        const types: TokenType[] = Array.isArray(type) ? type : [type];
 
         if (types.some((t) => this.peekTokenIs(t))) {
             this.nextToken();

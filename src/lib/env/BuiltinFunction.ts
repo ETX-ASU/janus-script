@@ -26,7 +26,7 @@ export class BuiltInFunctionObj implements EnvObj {
     }
 
     toJS() {
-        return () => {}; // not sure
+        return () => null; // not sure
     }
 
     Equals(obj: EnvObj) {

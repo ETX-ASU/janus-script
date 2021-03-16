@@ -82,6 +82,7 @@ export class Evaluator {
             case AstNodeType.IfExpression:
                 return this.evalIfExpression(node as IfExpression, env);
             case AstNodeType.ReturnStatement:
+                // eslint-disable-next-line no-case-declarations
                 const value = this.eval(
                     (node as ReturnStatement).ReturnValue as AstNode,
                     env
