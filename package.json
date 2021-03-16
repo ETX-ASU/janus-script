@@ -1,5 +1,5 @@
 {
-  "name": "@asu-etx/janus-script",
+  "name": "janus-script",
   "version": "1.0.0",
   "description": "scripting interpreter for project Janus",
   "main": "build/main/index.js",
