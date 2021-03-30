@@ -40,6 +40,11 @@ export class Environment {
             result[key] = value.toJS();
         });
 
+        // add in bindings
+        this.alias.forEach((_, bound) => {
+            result[bound] = this.Get(bound).toJS();
+        });
+
         return result;
     }
 

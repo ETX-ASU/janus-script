@@ -11,8 +11,8 @@ rl.prompt();
 
 rl.on('line', function(line) {
     if (line === 'dump') {
-        // console.log(globalEnv.toJSON());
-        console.log(JSON.stringify(globalEnv));
+        console.log(globalEnv.toJSON());
+        // console.log(JSON.stringify(globalEnv));
     } else {
         const lex = new Lexer(line);
         const parser = new Parser(lex);
