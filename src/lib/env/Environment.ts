@@ -14,11 +14,21 @@ export class Environment {
         }
     }
 
-    public get OnChange() {
-        return {
-            addListener: (listener) => this.events.on('change', listener),
-            removeListener: (listener) => this.events.off('change', listener)
+    public addListener(event: string, fn: any, context?: any, once?: boolean) {
+        if (once) {
+            this.events.once(event, fn, context);
+            return;
         }
+        this.events.addListener(event, fn, context);
+    }
+
+    public removeListener(
+        event: string,
+        fn: any,
+        context?: any,
+        once?: boolean
+    ) {
+        this.events.removeListener(event, fn, context, once);
     }
 
     public Get(name: string) {
@@ -38,7 +48,11 @@ export class Environment {
         const changedKeys = new Set();
         changedKeys.add(name);
         // also check bindings
-        this.alias.forEach((boundTo, bound) => { if (boundTo === name) { changedKeys.add(bound); } });
+        this.alias.forEach((boundTo, bound) => {
+            if (boundTo === name) {
+                changedKeys.add(bound);
+            }
+        });
         this.events.emit('change', { changed: Array.from(changedKeys) });
         return value;
     }
@@ -68,7 +82,7 @@ export class Environment {
     public remove(name: string[]) {
         name.forEach((key) => {
             this.store.delete(key);
-        })
+        });
         return name;
     }
 

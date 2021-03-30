@@ -6,10 +6,6 @@ const evaluator = new Evaluator();
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
-globalEnv.OnChange.addListener((e) => {
-    console.log('LISTENER: ', { e });
-});
-
 rl.setPrompt('Janus> ');
 rl.prompt();
 
@@ -17,6 +13,10 @@ rl.on('line', function (line) {
     if (line === 'dump') {
         console.log(globalEnv.toJSON());
         // console.log(JSON.stringify(globalEnv));
+    } else if (line === 'watch') {
+        globalEnv.addListener('change', (e) => {
+            console.log('CHANGE', e);
+        });
     } else {
         const lex = new Lexer(line);
         const parser = new Parser(lex);
