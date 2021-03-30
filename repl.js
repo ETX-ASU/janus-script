@@ -6,10 +6,14 @@ const evaluator = new Evaluator();
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
+globalEnv.OnChange.addListener((e) => {
+    console.log('LISTENER: ', { e });
+});
+
 rl.setPrompt('Janus> ');
 rl.prompt();
 
-rl.on('line', function(line) {
+rl.on('line', function (line) {
     if (line === 'dump') {
         console.log(globalEnv.toJSON());
         // console.log(JSON.stringify(globalEnv));
@@ -25,7 +29,7 @@ rl.on('line', function(line) {
         }
     }
     rl.prompt();
-}).on('close', function() {
+}).on('close', function () {
     console.log('Have a great day!');
     process.exit(0);
 });
