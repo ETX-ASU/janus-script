@@ -73,7 +73,10 @@ export class Environment {
 
         // add in bindings
         this.alias.forEach((_, bound) => {
-            result[bound] = this.Get(bound).toJS();
+            const boundValue = this.Get(bound);
+            if (boundValue) {
+                result[bound] = this.Get(bound).toJS();
+            }
         });
 
         return result;
