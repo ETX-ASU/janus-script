@@ -1,5 +1,7 @@
 import { EnvObj } from './obj';
 import EventEmitter from 'eventemitter3';
+import { ErrorObj } from './ErrorObj';
+import { NULL } from '../eval/builtin';
 
 export class Environment {
     private store: Map<string, EnvObj> = new Map();
@@ -57,10 +59,58 @@ export class Environment {
         return value;
     }
 
+    public isSet(name: string) {
+        return this.store.has(name);
+    }
+
+    public Clear(name: string) {
+        const changedKeys = new Set();
+        let change = false;
+        if (this.store.has(name)) {
+            change = true;
+            changedKeys.add(name);
+            // also check bindings
+            this.alias.forEach((boundTo, bound) => {
+                if (boundTo === name) {
+                    changedKeys.add(bound);
+                }
+            });
+            this.store.delete(name);
+        }
+        if (this.alias.has(name)) {
+            change = true;
+            changedKeys.add(name);
+            // also check bindings
+            this.alias.forEach((boundTo, bound) => {
+                if (boundTo === name) {
+                    changedKeys.add(bound);
+                }
+            });
+            this.alias.delete(name);
+        }
+        if (change) {
+            this.events.emit('change', { changed: Array.from(changedKeys) });
+        }
+        return NULL;
+    }
+
     public Bind(name: string, to: string) {
         this.alias.set(name, to);
         this.events.emit('change', { changed: [name] });
         return this.Get(to);
+    }
+
+    public Unbind(name: string) {
+        if (!this.isBound(name)) {
+            return new ErrorObj(`Identifier ${name} has not been bound.`);
+        }
+        this.alias.delete(name);
+        this.events.emit('change', { changed: [name] });
+        return NULL;
+    }
+
+    public isBound(name: string) {
+        return this.alias.has(name);
     }
 
     public toObj() {

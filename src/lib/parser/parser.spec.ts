@@ -1,4 +1,5 @@
 import test from 'ava';
+import { DeleteStatement } from '../ast/DeleteStatement';
 import { LetStatement } from '../ast/LetStatement';
 import { Lexer } from '../lexer/Lexer';
 import { Parser } from './Parser';
@@ -29,4 +30,18 @@ test('let statment refs', (t) => {
     t.assert(letStmt.Name.Value === 'y');
     t.assert(letStmt.Value.toString() === 'x');
     t.assert(letStmt.IsRef === true);
+});
+
+test('delete statements', (t) => {
+    const script = 'delete x;';
+    const lexer = new Lexer(script);
+    const parser = new Parser(lexer);
+    const prog = parser.parseProgram();
+
+    t.assert(parser.errors.length === 0);
+
+    t.assert(prog.Statements.length === 1);
+    t.assert(prog.Statements[0].tokenLiteral() === 'delete');
+    const deleteStmt = prog.Statements[0] as DeleteStatement;
+    t.assert(deleteStmt.Name.Value === 'x');
 });

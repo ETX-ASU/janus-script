@@ -3,6 +3,7 @@ import { ArrayLiteral } from '../ast/ArrayLiteral';
 import { BlockStatement } from '../ast/BlockStatement';
 import { BooleanLiteral } from '../ast/BooleanLiteral';
 import { CallExpression } from '../ast/CallExpression';
+import { DeleteStatement } from '../ast/DeleteStatement';
 import { ExpressionStatement } from '../ast/ExpressionStatement';
 import { FunctionLiteral } from '../ast/FunctionLiteral';
 import { HashLiteral } from '../ast/HashLiteral';
@@ -124,6 +125,8 @@ export class Parser {
                 return this.parseLetStatement();
             case TokenType.RETURN:
                 return this.parseReturnStatement();
+            case TokenType.DELETE:
+                return this.parseDeleteStatement();
             default:
                 return this.parseExpressionStatement();
         }
@@ -228,6 +231,42 @@ export class Parser {
 
         if (stmt.IsRef && stmt.Name.Value === stmt.Value.toString()) {
             this.errors.push('Cannot assign a ref to itself!!');
+            return null;
+        }
+
+        while (
+            !this.currTokenIs(TokenType.SEMICOLON) &&
+            !this.currTokenIs(TokenType.EOF)
+        ) {
+            this.nextToken();
+        }
+
+        return stmt;
+    }
+
+    private parseDeleteStatement() {
+        const stmt = new DeleteStatement({ ...this.currToken });
+
+        if (!this.expectPeek(TokenType.IDENT)) {
+            return null;
+        }
+
+        stmt.Name = new Identifier(
+            { ...this.currToken },
+            this.currToken.literal
+        );
+
+        this.nextToken();
+
+        if (
+            !(
+                this.peekTokenIs(TokenType.SEMICOLON) ||
+                this.peekTokenIs(TokenType.EOF)
+            )
+        ) {
+            this.errors.push(
+                'Expected ONLY DELETE IDENT, got expression'
+            );
             return null;
         }
 

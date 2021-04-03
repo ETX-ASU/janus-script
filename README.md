@@ -34,6 +34,18 @@ Janus> c
 3
 ```
 
+Once an identifier is bound it can no longer be normally assigned. You can change the reference to another identifier, however trying to assign a value will result in an error.
+
+To remove the binding or any other value you can use the `delete` command.
+
+```
+let a = 3;
+let b &= a;
+let b = 7; // ERROR
+delete b;
+let b = 7; // OK
+```
+
 ## Built In Functions and Values
 
 For random numbers there is a `rand` function. It can take a min (inclusive) and a max (exclusive) value range.

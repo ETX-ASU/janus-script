@@ -39,6 +39,7 @@ export enum TokenType {
     RETURN = 'RETURN',
     TRUE = 'TRUE',
     FALSE = 'FALSE',
+    DELETE = 'DELETE'
 }
 
 export type Token = {
@@ -54,6 +55,7 @@ keywords.set('else', TokenType.ELSE);
 keywords.set('return', TokenType.RETURN);
 keywords.set('true', TokenType.TRUE);
 keywords.set('false', TokenType.FALSE);
+keywords.set('delete', TokenType.DELETE);
 
 export const lookupIdentifier = (ident: string): TokenType => {
     if (keywords.has(ident)) {

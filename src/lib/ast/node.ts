@@ -2,6 +2,7 @@ export enum AstNodeType {
     Program,
     ExpressionStatement,
     LetStatement,
+    DeleteStatement,
     NumberLiteral,
     StringLiteral,
     BooleanLiteral,

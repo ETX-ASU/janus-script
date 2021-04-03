@@ -2,6 +2,7 @@ import { ArrayLiteral } from '../ast/ArrayLiteral';
 import { BlockStatement } from '../ast/BlockStatement';
 import { BooleanLiteral } from '../ast/BooleanLiteral';
 import { CallExpression } from '../ast/CallExpression';
+import { DeleteStatement } from '../ast/DeleteStatement';
 import { ExpressionStatement } from '../ast/ExpressionStatement';
 import { FunctionLiteral } from '../ast/FunctionLiteral';
 import { HashLiteral } from '../ast/HashLiteral';
@@ -94,8 +95,16 @@ export class Evaluator {
             case AstNodeType.LetStatement: {
                 const stmt = node as LetStatement;
                 if (stmt.IsRef) {
+                    if (env.isSet(stmt.Name.Value.toString())) {
+                        // Get takes the store as precedence, so this we should overwrite
+                        // by clearing first
+                        env.Clear(stmt.Name.Value.toString());
+                    }
                     env.Bind(stmt.Name.Value.toString(), stmt.Value.toString());
                 } else {
+                    if (env.isBound(stmt.Name.Value.toString())) {
+                        return new ErrorObj(`Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`);
+                    }
                     const value = this.eval(stmt.Value as AstNode, env);
                     if (this.isError(value)) {
                         return value;
@@ -103,6 +112,10 @@ export class Evaluator {
                     env.Set(stmt.Name?.Value as string, value);
                 }
                 return NULL;
+            }
+            case AstNodeType.DeleteStatement: {
+                const stmt = node as DeleteStatement;
+                return env.Clear(stmt.Name.Value.toString());
             }
             case AstNodeType.Identifier:
                 return this.evalIdentifier(node as Identifier, env);
