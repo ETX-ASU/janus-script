@@ -35,7 +35,9 @@ test('lexer nextToken', (t) => {
     let {crazy town!} = fn({in @ sane}, y) { return [{in @ sane}, y]; }
     let {some.result of insanity} = {crazy town!}(1, 2);
     let foo = "some \\"escaped\\" quotes";
-    let biz &= foo;`;
+    let biz &= foo;
+    let bingo = "\\sqrt[3]{}";
+    let json = "{\\"json\\":1}";`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -203,6 +205,16 @@ test('lexer nextToken', (t) => {
         [TokenType.IDENT, 'biz'],
         [TokenType.ASSIGN_REF, '&='],
         [TokenType.IDENT, 'foo'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.LET, 'let'],
+        [TokenType.IDENT, 'bingo'],
+        [TokenType.ASSIGN, '='],
+        [TokenType.STRING, '\\sqrt[3]{}'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.LET, 'let'],
+        [TokenType.IDENT, 'json'],
+        [TokenType.ASSIGN, '='],
+        [TokenType.STRING, '{"json":1}'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];

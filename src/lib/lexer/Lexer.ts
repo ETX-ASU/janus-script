@@ -165,13 +165,15 @@ export class Lexer {
 
         while (this.ch !== '"' && this.ch !== null) {
             if (this.ch === '\\') {
-                if (this.peekChar() === '"') {
+                if (this.peekChar() === '"' || this.peekChar() === '\\') {
                     this.readChar();
                 }
             }
             this.readChar();
         }
-        return this.input.substring(startPos, this.position).replace(/\\"/g, '"');
+        return this.input.substring(startPos, this.position)
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
     }
 
     private readNumber() {
