@@ -187,7 +187,7 @@ export class Lexer {
 
     private readIdentifier() {
         const startPos = this.position;
-        while (isLetter(this.ch) || this.ch === '.') {
+        while (isLetter(this.ch) || isDigit(this.ch) || this.ch === '.') {
             // console.log('ID', this.ch);
             this.readChar();
         }
