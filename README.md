@@ -70,4 +70,27 @@ let q = rand(2, 3.3); // 3.12434234
 let b = rand(0.1, 1); // 0.23523452
 ```
 
+### Math Library
+
+#### Constants
+
+* Math.E - 2.718281828459045
+* Math.PI - 3.141592653589793
+* Math.LN10 - 2.302585092994046
+* Math.LN2 - 0.6931471805599453
+* Math.LOG2E - 1.4426950408889634
+* Math.SQRT2 - 1.4142135623730951
+* Math.SQRT1_2 - 0.7071067811865476
+
+#### Functions
+
+`Math.log(value)` - Calculates the logarithm of a value.
+
+`Math.max(value1, value2, ...valueN)` - Evaluates value1 and value2 (or more values) and returns the largest value.
+
+`Math.min(value1, value2, ...valueN)` - Evaluates value1 and value2 (or more values) and returns the smallest value.
+
+`Math.round(value)` - rounds to the nearest integer
+
+
 TODO

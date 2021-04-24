@@ -103,7 +103,9 @@ export class Evaluator {
                     env.Bind(stmt.Name.Value.toString(), stmt.Value.toString());
                 } else {
                     if (env.isBound(stmt.Name.Value.toString())) {
-                        return new ErrorObj(`Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`);
+                        return new ErrorObj(
+                            `Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`
+                        );
                     }
                     const value = this.eval(stmt.Value as AstNode, env);
                     if (this.isError(value)) {
@@ -166,6 +168,13 @@ export class Evaluator {
     }
 
     evalExpressions(expressions: Expression[], env: Environment) {
+        if (!Array.isArray(expressions)) {
+            return [
+                new ErrorObj(
+                    `expressions error: ${JSON.stringify(expressions)}`
+                ),
+            ];
+        }
         const result: EnvObj[] = [];
         for (const e of expressions) {
             const evaluated = this.eval(e, env);
