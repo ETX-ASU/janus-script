@@ -1,6 +1,6 @@
 {
   "name": "janus-script",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "scripting interpreter for project Janus",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -45,6 +45,7 @@
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/mathjs": "^6.0.11",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "ava": "^3.14.0",
@@ -101,6 +102,8 @@
     ]
   },
   "dependencies": {
-    "eventemitter3": "^4.0.7"
+    "eventemitter3": "^4.0.7",
+    "mathjs": "^9.3.2",
+    "seedrandom": "^3.0.5"
   }
 }

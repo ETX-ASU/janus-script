@@ -434,8 +434,9 @@ export class Parser {
         }
 
         if (!this.peekTokenIs(end)) {
-            return null; // return nil
+            return null;
         }
+        this.nextToken();
 
         return list;
     }

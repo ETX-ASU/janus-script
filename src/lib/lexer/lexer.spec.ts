@@ -37,7 +37,8 @@ test('lexer nextToken', (t) => {
     let foo = "some \\"escaped\\" quotes";
     let biz &= foo;
     let bingo = "\\sqrt[3]{}";
-    let json = "{\\"json\\":1}";`;
+    let json = "{\\"json\\":1}";
+    let nest = [[1,2],[3,4]];`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -215,6 +216,23 @@ test('lexer nextToken', (t) => {
         [TokenType.IDENT, 'json'],
         [TokenType.ASSIGN, '='],
         [TokenType.STRING, '{"json":1}'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.LET, 'let'],
+        [TokenType.IDENT, 'nest'],
+        [TokenType.ASSIGN, '='],
+        [TokenType.LBRACKET, '['],
+        [TokenType.LBRACKET, '['],
+        [TokenType.NUMBER, '1'],
+        [TokenType.COMMA, ','],
+        [TokenType.NUMBER, '2'],
+        [TokenType.RBRACKET, ']'],
+        [TokenType.COMMA, ','],
+        [TokenType.LBRACKET, '['],
+        [TokenType.NUMBER, '3'],
+        [TokenType.COMMA, ','],
+        [TokenType.NUMBER, '4'],
+        [TokenType.RBRACKET, ']'],
+        [TokenType.RBRACKET, ']'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];

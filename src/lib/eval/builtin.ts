@@ -1,6 +1,9 @@
+import * as math from 'mathjs';
+import seedrandom from 'seedrandom';
 import { BoolObj } from '../env/BoolObj';
 import { BuiltInFunction, BuiltInFunctionObj } from '../env/BuiltinFunction';
 import { ErrorObj } from '../env/ErrorObj';
+import { HashObj } from '../env/Hash';
 import { NullObj } from '../env/NullObj';
 import { NumberObj } from '../env/NumberObj';
 import { EnvObj, EnvObjType } from '../env/obj';
@@ -13,7 +16,7 @@ export const TRUE = new BoolObj(true);
 export const FALSE = new BoolObj(false);
 
 const builtinRound: BuiltInFunction = (input: EnvObj) => {
-    if (input.Type() !== EnvObjType.NUMBER) {
+    if (input?.Type() !== EnvObjType.NUMBER) {
         return new ErrorObj('invalid input type');
     }
     const num = input as NumberObj;
@@ -61,12 +64,115 @@ const builtinRand: BuiltInFunction = (min: EnvObj, max: EnvObj) => {
     return new NumberObj(result);
 };
 
+const builtinMax: BuiltInFunction = (
+    input1: EnvObj,
+    input2: EnvObj,
+    ...rest
+) => {
+    if (
+        input1?.Type() !== EnvObjType.NUMBER ||
+        input2?.Type() !== EnvObjType.NUMBER
+    ) {
+        return new ErrorObj('invalid input type');
+    }
+    if (rest?.length) {
+        if (!rest.every((arg) => arg.Type() === EnvObjType.NUMBER)) {
+            return new ErrorObj('all arguments must be NUMBER');
+        }
+    }
+    const num1 = input1 as NumberObj;
+    const num2 = input2 as NumberObj;
+    const additional = rest.map((arg) => (arg as NumberObj).Value);
+    return new NumberObj(Math.max(num1.Value, num2.Value, ...additional));
+};
+
+const builtinMin: BuiltInFunction = (
+    input1: EnvObj,
+    input2: EnvObj,
+    ...rest
+) => {
+    if (
+        input1?.Type() !== EnvObjType.NUMBER ||
+        input2?.Type() !== EnvObjType.NUMBER
+    ) {
+        return new ErrorObj('invalid input type');
+    }
+    if (rest?.length) {
+        if (!rest.every((arg) => arg.Type() === EnvObjType.NUMBER)) {
+            return new ErrorObj('all arguments must be NUMBER');
+        }
+    }
+    const num1 = input1 as NumberObj;
+    const num2 = input2 as NumberObj;
+    const additional = rest.map((arg) => (arg as NumberObj).Value);
+    return new NumberObj(Math.min(num1.Value, num2.Value, ...additional));
+};
+
+const builtinLog: BuiltInFunction = (input1: EnvObj) => {
+    if (input1?.Type() !== EnvObjType.NUMBER) {
+        return new ErrorObj('invalid input type');
+    }
+    const num1 = input1 as NumberObj;
+    return new NumberObj(Math.log(num1.Value));
+};
+
+let rng = seedrandom(1234567);
+const builtinFixedRandom: BuiltInFunction = () => {
+    return new NumberObj(rng());
+};
+const builtinSeedFixedRandom: BuiltInFunction = (seed: EnvObj) => {
+    if (
+        seed?.Type() !== EnvObjType.NUMBER &&
+        seed?.Type() !== EnvObjType.STRING
+    ) {
+        return new ErrorObj('invalid input type');
+    }
+    rng = seedrandom((seed as NumberObj | StringObj).Value);
+    return NULL;
+};
+
+const builtinMathEval: BuiltInFunction = (
+    expression: EnvObj,
+    scope?: EnvObj
+) => {
+    if (expression?.Type() !== EnvObjType.STRING) {
+        return new ErrorObj('invalid input type, expects string');
+    }
+    if (scope) {
+        if (scope.Type() !== EnvObjType.HASH) {
+            return new ErrorObj('expected scope to be HASH OBJ');
+        }
+    }
+    let result = '';
+    try {
+        const scopeObj = scope ? (scope as HashObj).toJS() : {};
+        result = math.evaluate((expression as StringObj).Value, scopeObj);
+    } catch (err) {
+        return new ErrorObj('error parsing expression');
+    }
+    return new StringObj(result);
+};
+
 export const builtins: Record<string, EnvObj> = {
     null: NULL,
     undefined: UNDEFINED,
     round: new BuiltInFunctionObj(builtinRound),
     rand: new BuiltInFunctionObj(builtinRand),
+    fixedrandom: new BuiltInFunctionObj(builtinFixedRandom),
+    seed_fixed_random: new BuiltInFunctionObj(builtinSeedFixedRandom),
     json: new BuiltInFunctionObj(builtinJSON),
     typeof: new BuiltInFunctionObj(builtinTypeof),
+    'Math.E': new NumberObj(Math.E),
     'Math.PI': new NumberObj(Math.PI),
+    'Math.LN10': new NumberObj(Math.LN10),
+    'Math.LN2': new NumberObj(Math.LN2),
+    'Math.LOG2E': new NumberObj(Math.LOG2E),
+    'Math.LOG10E': new NumberObj(Math.LOG10E),
+    'Math.SQRT2': new NumberObj(Math.SQRT2),
+    'Math.SQRT1_2': new NumberObj(Math.SQRT1_2),
+    'Math.log': new BuiltInFunctionObj(builtinLog),
+    'Math.max': new BuiltInFunctionObj(builtinMax),
+    'Math.min': new BuiltInFunctionObj(builtinMin),
+    'Math.round': new BuiltInFunctionObj(builtinRound),
+    'Math.evaluate': new BuiltInFunctionObj(builtinMathEval),
 };
