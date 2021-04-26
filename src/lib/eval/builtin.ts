@@ -181,7 +181,6 @@ export const builtins: Map<string, EnvObj> = new Map();
 builtins.set('null', NULL);
 builtins.set('undefined', UNDEFINED);
 builtins.set('NaN', NAN);
-builtins.set('round', new BuiltInFunctionObj(builtinRound));
 builtins.set('random', new BuiltInFunctionObj(builtinRand));
 builtins.set('fixedrandom', new BuiltInFunctionObj(builtinFixedRandom));
 builtins.set(
