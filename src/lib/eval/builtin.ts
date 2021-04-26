@@ -14,6 +14,7 @@ export const UNDEFINED = new UndefinedObj();
 export const NULL = new NullObj();
 export const TRUE = new BoolObj(true);
 export const FALSE = new BoolObj(false);
+export const NAN = new NumberObj(Number.NaN);
 
 const builtinRound: BuiltInFunction = (input: EnvObj) => {
     if (input?.Type() !== EnvObjType.NUMBER) {
@@ -153,26 +154,54 @@ const builtinMathEval: BuiltInFunction = (
     return new StringObj(result);
 };
 
-export const builtins: Record<string, EnvObj> = {
-    null: NULL,
-    undefined: UNDEFINED,
-    round: new BuiltInFunctionObj(builtinRound),
-    rand: new BuiltInFunctionObj(builtinRand),
-    fixedrandom: new BuiltInFunctionObj(builtinFixedRandom),
-    seed_fixed_random: new BuiltInFunctionObj(builtinSeedFixedRandom),
-    json: new BuiltInFunctionObj(builtinJSON),
-    typeof: new BuiltInFunctionObj(builtinTypeof),
-    'Math.E': new NumberObj(Math.E),
-    'Math.PI': new NumberObj(Math.PI),
-    'Math.LN10': new NumberObj(Math.LN10),
-    'Math.LN2': new NumberObj(Math.LN2),
-    'Math.LOG2E': new NumberObj(Math.LOG2E),
-    'Math.LOG10E': new NumberObj(Math.LOG10E),
-    'Math.SQRT2': new NumberObj(Math.SQRT2),
-    'Math.SQRT1_2': new NumberObj(Math.SQRT1_2),
-    'Math.log': new BuiltInFunctionObj(builtinLog),
-    'Math.max': new BuiltInFunctionObj(builtinMax),
-    'Math.min': new BuiltInFunctionObj(builtinMin),
-    'Math.round': new BuiltInFunctionObj(builtinRound),
-    'Math.evaluate': new BuiltInFunctionObj(builtinMathEval),
+const builtinToString: BuiltInFunction = (value: EnvObj) => {
+    if (!value) {
+        return new ErrorObj('invalid input type');
+    }
+    return new StringObj(value.Inspect());
 };
+
+const builtinToNumber: BuiltInFunction = (value: EnvObj) => {
+    if (value?.Type() !== EnvObjType.STRING) {
+        return new ErrorObj('invalid input type, expects STRING');
+    }
+    let result;
+    try {
+        result = parseFloat((value as StringObj).Value);
+    } catch (err) {
+        return new ErrorObj('failed to parse number');
+    }
+    if (isNaN(result)) {
+        return NAN;
+    }
+    return new NumberObj(result);
+};
+
+export const builtins: Map<string, EnvObj> = new Map();
+builtins.set('null', NULL);
+builtins.set('undefined', UNDEFINED);
+builtins.set('NaN', NAN);
+builtins.set('round', new BuiltInFunctionObj(builtinRound));
+builtins.set('random', new BuiltInFunctionObj(builtinRand));
+builtins.set('fixedrandom', new BuiltInFunctionObj(builtinFixedRandom));
+builtins.set(
+    'seed_fixed_random',
+    new BuiltInFunctionObj(builtinSeedFixedRandom)
+);
+builtins.set('json', new BuiltInFunctionObj(builtinJSON));
+builtins.set('string', new BuiltInFunctionObj(builtinToString));
+builtins.set('number', new BuiltInFunctionObj(builtinToNumber));
+builtins.set('typeof', new BuiltInFunctionObj(builtinTypeof));
+builtins.set('Math.E', new NumberObj(Math.E));
+builtins.set('Math.PI', new NumberObj(Math.PI));
+builtins.set('Math.LN10', new NumberObj(Math.LN10));
+builtins.set('Math.LN2', new NumberObj(Math.LN2));
+builtins.set('Math.LOG2E', new NumberObj(Math.LOG2E));
+builtins.set('Math.LOG10E', new NumberObj(Math.LOG10E));
+builtins.set('Math.SQRT2', new NumberObj(Math.SQRT2));
+builtins.set('Math.SQRT1_2', new NumberObj(Math.SQRT1_2));
+builtins.set('Math.log', new BuiltInFunctionObj(builtinLog));
+builtins.set('Math.max', new BuiltInFunctionObj(builtinMax));
+builtins.set('Math.min', new BuiltInFunctionObj(builtinMin));
+builtins.set('Math.round', new BuiltInFunctionObj(builtinRound));
+builtins.set('Math.evaluate', new BuiltInFunctionObj(builtinMathEval));

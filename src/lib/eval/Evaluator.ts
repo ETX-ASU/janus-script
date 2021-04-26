@@ -29,7 +29,7 @@ import { NumberObj } from '../env/NumberObj';
 import { EnvObj, EnvObjType } from '../env/obj';
 import { ReturnValueObj } from '../env/ReturnValueObj';
 import { StringObj } from '../env/StringObj';
-import { builtins, FALSE, NULL, TRUE, UNDEFINED } from './builtin';
+import { builtins, FALSE, NAN, NULL, TRUE, UNDEFINED } from './builtin';
 
 export class Evaluator {
     public eval(node: AstNode, env: Environment): EnvObj {
@@ -105,6 +105,12 @@ export class Evaluator {
                     if (env.isBound(stmt.Name.Value.toString())) {
                         return new ErrorObj(
                             `Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`
+                        );
+                    }
+                    // only block overwrite on the global scope
+                    if (!env.hasOuter() && builtins.has(stmt.Name.Value.toString())) {
+                        return new ErrorObj(
+                            `Identifier ${stmt.Name.Value} is builtin reserved reference, cannot assign.`
                         );
                     }
                     const value = this.eval(stmt.Value as AstNode, env);
@@ -188,7 +194,7 @@ export class Evaluator {
     }
 
     applyFunction(fn: EnvObj, args: EnvObj[]) {
-        if (fn.Type() === EnvObjType.FUNCTION) {
+        if (fn?.Type() === EnvObjType.FUNCTION) {
             const fnEnv = this.extendFunctionEnv(fn as FunctionObj, args);
             const evaluated = this.eval(
                 (fn as FunctionObj).Body as BlockStatement,
@@ -196,10 +202,10 @@ export class Evaluator {
             );
             return this.unwrapReturnValue(evaluated);
         }
-        if (fn.Type() === EnvObjType.BUILTIN) {
+        if (fn?.Type() === EnvObjType.BUILTIN) {
             return (fn as BuiltInFunctionObj).Fn(...args);
         }
-        return this.newError(`not a function! ${fn.Type()}`);
+        return this.newError(`not a function! ${fn?.Type()}`);
     }
 
     extendFunctionEnv(fn: FunctionObj, args: EnvObj[]) {
@@ -346,9 +352,9 @@ export class Evaluator {
             case '>':
                 return this.nativeBoolToBooleanObj(leftVal > rightVal);
             case '==':
-                return this.nativeBoolToBooleanObj(left.Equals(right));
+                return this.nativeBoolToBooleanObj(this.isEqual(left, right));
             case '!=':
-                return this.nativeBoolToBooleanObj(!left.Equals(right));
+                return this.nativeBoolToBooleanObj(!this.isEqual(left, right));
             default:
                 return this.newError(
                     `unknown operator: number ${operator} number`
@@ -378,7 +384,7 @@ export class Evaluator {
             return value;
         }
 
-        const builtin = builtins[id.Value];
+        const builtin = builtins.get(id.Value);
         if (builtin) {
             return builtin;
         }
@@ -468,6 +474,9 @@ export class Evaluator {
     }
 
     isTruthy(obj: EnvObj) {
+        if (obj === NAN) {
+            return false;
+        }
         switch (obj.Type()) {
             case EnvObjType.NULL:
             case EnvObjType.UNDEFINED:

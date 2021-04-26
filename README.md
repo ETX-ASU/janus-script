@@ -48,26 +48,39 @@ let b = 7; // OK
 
 ## Built In Functions and Values
 
-For random numbers there is a `rand` function. It can take a min (inclusive) and a max (exclusive) value range.
+You can determine the type of any identifier using `typeof`:
+
+``` let c = 8; typeof(c); // NUMBER ```
+
+It may be necessary to convert types, this can be done with `string` and `number` :
+
+```
+let a = 3;
+let b = "I have " + string(a) + " shoes.";
+let input = "33";
+let result = 19 + number(input);
+```
+
+For random numbers there is a `random` function. It can take a min (inclusive) and a max (exclusive) value range.
 
 When you call with no parameters it returns a *float* between 0 and 1.
 
 ```
-rand(); // 0.23452352
+random(); // 0.23452352
 ```
 
 If you don't specify the max parameter, then it returns between 0 and the value.
 
 ```
-let r = rand(7); // 5
+let r = random(7); // 5
 ```
 
 The return value depends on the type of min & max. If min and max are both integers, it will return an integer. If either are floats, it will return a float. Note that using `#.0` will not convert it to float, you will need a minimum value on the right i.e. `0.00000001`.
 
 ```
-let d6 = rand(1, 7); // 4
-let q = rand(2, 3.3); // 3.12434234
-let b = rand(0.1, 1); // 0.23523452
+let d6 = random(1, 7); // 4
+let q = random(2, 3.3); // 3.12434234
+let b = random(0.1, 1); // 0.23523452
 ```
 
 ### Math Library

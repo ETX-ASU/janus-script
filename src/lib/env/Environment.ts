@@ -142,4 +142,8 @@ export class Environment {
     public toJSON() {
         return JSON.stringify(this.toObj());
     }
+
+    public hasOuter() {
+        return this.outer !== null;
+    }
 }
