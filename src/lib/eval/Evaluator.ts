@@ -108,7 +108,10 @@ export class Evaluator {
                         );
                     }
                     // only block overwrite on the global scope
-                    if (!env.hasOuter() && builtins.has(stmt.Name.Value.toString())) {
+                    if (
+                        !env.hasOuter() &&
+                        builtins.has(stmt.Name.Value.toString())
+                    ) {
                         return new ErrorObj(
                             `Identifier ${stmt.Name.Value} is builtin reserved reference, cannot assign.`
                         );
@@ -367,10 +370,10 @@ export class Evaluator {
 
         for (const statement of block.Statements) {
             result = this.eval(statement, env);
-            if (result.Type() === EnvObjType.RETURN_VALUE) {
-                return (result as ReturnValueObj).Value;
-            }
-            if (result.Type() === EnvObjType.ERROR) {
+            if (
+                result.Type() === EnvObjType.RETURN_VALUE ||
+                result.Type() === EnvObjType.ERROR
+            ) {
                 return result;
             }
         }

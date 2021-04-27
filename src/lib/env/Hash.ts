@@ -92,9 +92,10 @@ export class HashObj implements EnvObj {
     }
 
     toJS() {
-        const obj = {};
+        const obj: any = {};
         this.pairs.forEach((value) => {
-            obj[value.Key.Inspect()] = value.Value.toJS();
+            const keyValue = (value.Key as NumberObj | StringObj).Value;
+            obj[keyValue] = value.Value.toJS();
         });
         return obj;
     }

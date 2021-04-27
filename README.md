@@ -61,6 +61,24 @@ let input = "33";
 let result = 19 + number(input);
 ```
 
+Arrays can be created from string using `array`.
+
+```
+let arr = [1, 2, 3];
+let j = json(arr); // string
+let arr1 = array(j); // back to janus array
+```
+
+You can also get the length of an array or string using `len`.
+
+Hash objects can be created from string using `hash`.
+
+```
+let o = {"a": 1, "b": 2};
+let s = json(o); // json string
+let i = hash(s); // back to a janus hash
+```
+
 For random numbers there is a `random` function. It can take a min (inclusive) and a max (exclusive) value range.
 
 When you call with no parameters it returns a *float* between 0 and 1.

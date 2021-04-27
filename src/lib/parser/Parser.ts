@@ -264,9 +264,7 @@ export class Parser {
                 this.peekTokenIs(TokenType.EOF)
             )
         ) {
-            this.errors.push(
-                'Expected ONLY DELETE IDENT, got expression'
-            );
+            this.errors.push('Expected ONLY DELETE IDENT, got expression');
             return null;
         }
 
@@ -527,9 +525,9 @@ export class Parser {
             this.parseExpression(OperatorPrecedence.LOWEST)
         );
 
-        while (
-            !this.currTokenIs(TokenType.SEMICOLON) &&
-            !this.currTokenIs(TokenType.EOF)
+        if (
+            this.peekTokenIs(TokenType.SEMICOLON) ||
+            this.peekTokenIs(TokenType.EOF)
         ) {
             this.nextToken();
         }
@@ -561,12 +559,7 @@ export class Parser {
         if (this.peekTokenIs(TokenType.ELSE)) {
             this.nextToken();
 
-            if (
-                !(
-                    this.expectPeek(TokenType.OPEN_BLOCK) ||
-                    this.expectPeek(TokenType.LBRACE)
-                )
-            ) {
+            if (!this.expectPeek([TokenType.OPEN_BLOCK, TokenType.LBRACE])) {
                 return null;
             }
 

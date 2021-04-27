@@ -1,9 +1,10 @@
 import * as math from 'mathjs';
 import seedrandom from 'seedrandom';
+import { ArrayObj } from '../env/ArrayObj';
 import { BoolObj } from '../env/BoolObj';
 import { BuiltInFunction, BuiltInFunctionObj } from '../env/BuiltinFunction';
 import { ErrorObj } from '../env/ErrorObj';
-import { HashObj } from '../env/Hash';
+import { hashKey, HashObj } from '../env/Hash';
 import { NullObj } from '../env/NullObj';
 import { NumberObj } from '../env/NumberObj';
 import { EnvObj, EnvObjType } from '../env/obj';
@@ -177,6 +178,99 @@ const builtinToNumber: BuiltInFunction = (value: EnvObj) => {
     return new NumberObj(result);
 };
 
+const envArrayFromJsArray = (jsArr: any[]) => {
+    const envElements = jsArr.map(envObjFromJS);
+    const envArr = new ArrayObj(envElements);
+    return envArr;
+};
+
+const envObjFromJS = (jsValue: any) => {
+    switch (typeof jsValue) {
+        case 'string':
+            return new StringObj(jsValue);
+        case 'number':
+            return new NumberObj(jsValue);
+        case 'boolean':
+            return new BoolObj(jsValue);
+        case 'object': {
+            if (jsValue === null) {
+                return NULL;
+            }
+            if (Array.isArray(jsValue)) {
+                return envArrayFromJsArray(jsValue);
+            }
+            return envHashFromJsObj(jsValue);
+        }
+        default:
+            return UNDEFINED;
+    }
+};
+
+const envHashFromJsObj = (jsObj: Record<string | number, any>) => {
+    const hashObj = new HashObj();
+    Object.keys(jsObj).forEach((key) => {
+        const value = jsObj[key];
+        let envKey;
+        if (key === 'true') {
+            envKey = TRUE;
+        } else if (key === 'false') {
+            envKey = FALSE;
+        } else if (!isNaN(parseFloat(key))) {
+            envKey = new NumberObj(parseFloat(key));
+        } else {
+            envKey = envObjFromJS(key);
+        }
+        const envValue = envObjFromJS(value);
+        hashObj.Pairs.set(hashKey(envKey), {
+            Key: envKey,
+            Value: envValue,
+        });
+    });
+    return hashObj;
+};
+
+const builtinToArray: BuiltInFunction = (value: EnvObj) => {
+    if (value?.Type() !== EnvObjType.STRING) {
+        return new ErrorObj('invalid input type, expects STRING');
+    }
+    let jsArr;
+    try {
+        jsArr = JSON.parse((value as StringObj).Value);
+    } catch (err) {
+        return new ErrorObj('error parsing array from string');
+    }
+    if (!Array.isArray(jsArr)) {
+        return new ErrorObj('error parsing array from string');
+    }
+    return envArrayFromJsArray(jsArr);
+};
+
+const builtinToHash: BuiltInFunction = (value: EnvObj) => {
+    if (value?.Type() !== EnvObjType.STRING) {
+        return new ErrorObj('invalid input type, expects STRING');
+    }
+    let jsObj;
+    try {
+        jsObj = JSON.parse((value as StringObj).Value);
+    } catch (err) {
+        return new ErrorObj('error parsing hash from string');
+    }
+    return envHashFromJsObj(jsObj);
+};
+
+const builtinLen: BuiltInFunction = (value: EnvObj) => {
+    if (
+        value?.Type() !== EnvObjType.STRING &&
+        value?.Type() !== EnvObjType.ARRAY
+    ) {
+        return new ErrorObj('invalid input type, expects STRING or ARRAY');
+    }
+    if (value.Type() === EnvObjType.STRING) {
+        return new NumberObj((value as StringObj).Value.length);
+    }
+    return new NumberObj((value as ArrayObj).Elements.length);
+};
+
 export const builtins: Map<string, EnvObj> = new Map();
 builtins.set('null', NULL);
 builtins.set('undefined', UNDEFINED);
@@ -190,6 +284,9 @@ builtins.set(
 builtins.set('json', new BuiltInFunctionObj(builtinJSON));
 builtins.set('string', new BuiltInFunctionObj(builtinToString));
 builtins.set('number', new BuiltInFunctionObj(builtinToNumber));
+builtins.set('array', new BuiltInFunctionObj(builtinToArray));
+builtins.set('len', new BuiltInFunctionObj(builtinLen));
+builtins.set('hash', new BuiltInFunctionObj(builtinToHash));
 builtins.set('typeof', new BuiltInFunctionObj(builtinTypeof));
 builtins.set('Math.E', new NumberObj(Math.E));
 builtins.set('Math.PI', new NumberObj(Math.PI));

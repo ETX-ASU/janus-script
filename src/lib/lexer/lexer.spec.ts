@@ -38,7 +38,8 @@ test('lexer nextToken', (t) => {
     let biz &= foo;
     let bingo = "\\sqrt[3]{}";
     let json = "{\\"json\\":1}";
-    let nest = [[1,2],[3,4]];`;
+    let nest = [[1,2],[3,4]];
+    let ifs = fn(v) { if(v == 1) { return 2; } if (v == 2) { return 3; } return 4; };`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -233,6 +234,41 @@ test('lexer nextToken', (t) => {
         [TokenType.NUMBER, '4'],
         [TokenType.RBRACKET, ']'],
         [TokenType.RBRACKET, ']'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.LET, 'let'],
+        [TokenType.IDENT, 'ifs'],
+        [TokenType.ASSIGN, '='],
+        [TokenType.FUNCTION, 'fn'],
+        [TokenType.LPAREN, '('],
+        [TokenType.IDENT, 'v'],
+        [TokenType.RPAREN, ')'],
+        [TokenType.LBRACE, '{'],
+        [TokenType.IF, 'if'],
+        [TokenType.LPAREN, '('],
+        [TokenType.IDENT, 'v'],
+        [TokenType.EQ, '=='],
+        [TokenType.NUMBER, '1'],
+        [TokenType.RPAREN, ')'],
+        [TokenType.LBRACE, '{'],
+        [TokenType.RETURN, 'return'],
+        [TokenType.NUMBER, '2'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.RBRACE, '}'],
+        [TokenType.IF, 'if'],
+        [TokenType.LPAREN, '('],
+        [TokenType.IDENT, 'v'],
+        [TokenType.EQ, '=='],
+        [TokenType.NUMBER, '2'],
+        [TokenType.RPAREN, ')'],
+        [TokenType.LBRACE, '{'],
+        [TokenType.RETURN, 'return'],
+        [TokenType.NUMBER, '3'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.RBRACE, '}'],
+        [TokenType.RETURN, 'return'],
+        [TokenType.NUMBER, '4'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.RBRACE, '}'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];
