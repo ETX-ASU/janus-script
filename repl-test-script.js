@@ -51,6 +51,25 @@ const std_funcs = `
             }
         }
     };
+    let rand = rng(1234567);
+    let rndm = fn(min, max, step) {
+        if (step == undefined) {
+            let step = 1;
+        }
+        return Math.round((rand() * (max - min) / step)) * step + min;
+    };
+    let eigenvalues = fn(matrix) {
+        return array(Math.evaluate("eigs(" + string(matrix) + ").values"));
+    };
+    let diag = fn(vector) {
+        return array(Math.evaluate("diag(" + string(vector) + ")"));
+    };
+    let getDiag = fn(matrix) {
+        return array(Math.evaluate("diag(" + string(matrix) + ")"));
+    };
+    let trans = fn(matrix) {
+        return array(Math.evaluate("transpose(" + string(matrix) + ")"));
+    };
 `;
 
 module.exports = { std: std_funcs };

@@ -348,6 +348,8 @@ export class Evaluator {
                 return new NumberObj(leftVal - rightVal);
             case '*':
                 return new NumberObj(leftVal * rightVal);
+            case '^':
+                return new NumberObj(Math.pow(leftVal, rightVal));
             case '/':
                 return new NumberObj(leftVal / rightVal);
             case '<':

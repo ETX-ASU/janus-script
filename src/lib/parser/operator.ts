@@ -7,6 +7,7 @@ export enum OperatorPrecedence {
     LESSGREATER, // > or <
     SUM, // +
     PRODUCT, // *
+    EXPONENT, // ^
     PREFIX, // -X or !X
     CALL, // function(x)
     INDEX, // array[index]
@@ -21,6 +22,7 @@ precendences.set(TokenType.PLUS, OperatorPrecedence.SUM);
 precendences.set(TokenType.MINUS, OperatorPrecedence.SUM);
 precendences.set(TokenType.SLASH, OperatorPrecedence.PRODUCT);
 precendences.set(TokenType.ASTERISK, OperatorPrecedence.PRODUCT);
+precendences.set(TokenType.CARET, OperatorPrecedence.EXPONENT);
 precendences.set(TokenType.LPAREN, OperatorPrecedence.CALL);
 precendences.set(TokenType.LBRACKET, OperatorPrecedence.INDEX);
 

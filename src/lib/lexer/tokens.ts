@@ -17,6 +17,7 @@ export enum TokenType {
     ASTERISK = '*',
     EQ = '==',
     NOT_EQ = '!=',
+    CARET = '^',
     // Delimiters
     COMMA = ',',
     DOT = '.',

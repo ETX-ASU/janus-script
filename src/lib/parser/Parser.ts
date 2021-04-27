@@ -84,6 +84,10 @@ export class Parser {
             TokenType.ASTERISK,
             this.parseInfixExpression.bind(this)
         );
+        this.registerInfix(
+            TokenType.CARET,
+            this.parseInfixExpression.bind(this)
+        );
         this.registerInfix(TokenType.EQ, this.parseInfixExpression.bind(this));
         this.registerInfix(
             TokenType.NOT_EQ,

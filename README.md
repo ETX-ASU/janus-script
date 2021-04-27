@@ -79,26 +79,15 @@ let s = json(o); // json string
 let i = hash(s); // back to a janus hash
 ```
 
-For random numbers there is a `random` function. It can take a min (inclusive) and a max (exclusive) value range.
+For random numbers there is a `random` function it returns a *float* between 0 and 1.
 
-When you call with no parameters it returns a *float* between 0 and 1.
-
-```
-random(); // 0.23452352
-```
-
-If you don't specify the max parameter, then it returns between 0 and the value.
+You can create a deterministic random number generator using `rng`. The seed provided determines the outcome.
 
 ```
-let r = random(7); // 5
-```
-
-The return value depends on the type of min & max. If min and max are both integers, it will return an integer. If either are floats, it will return a float. Note that using `#.0` will not convert it to float, you will need a minimum value on the right i.e. `0.00000001`.
-
-```
-let d6 = random(1, 7); // 4
-let q = random(2, 3.3); // 3.12434234
-let b = random(0.1, 1); // 0.23523452
+let seed = 1234;
+let rand = rng(seed);
+let otherRand = rng(seed);
+otherRand() == rand(); // true
 ```
 
 ### Math Library

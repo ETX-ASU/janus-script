@@ -96,6 +96,9 @@ export class Lexer {
             case '/':
                 token = newToken(TokenType.SLASH, this.ch);
                 break;
+            case '^':
+                token = newToken(TokenType.CARET, this.ch);
+                break;
             case '>':
                 if (this.peekChar() === '>') {
                     this.readChar();
@@ -178,10 +181,22 @@ export class Lexer {
 
     private readNumber() {
         const startPos = this.position;
+        let done = false;
+        let e = false;
         do {
             this.readChar();
-        } while (isDigit(this.ch) || this.ch === '.');
-        // debugger;
+            if (!(isDigit(this.ch) || this.ch === '.')) {
+                if (!e && this.ch === 'e') {
+                    e = true;
+                } else if (e) {
+                    if (!(this.ch === '-' || this.ch === '+' || isDigit(this.ch))) {
+                        done = true;
+                    }
+                } else {
+                    done = true;
+                }
+            }
+        } while (!done);
         return this.input.substring(startPos, this.position);
     }
 

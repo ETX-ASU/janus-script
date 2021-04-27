@@ -33,37 +33,8 @@ const builtinTypeof: BuiltInFunction = (input: EnvObj) => {
     return new StringObj(input.Type().toString());
 };
 
-const isInt = (x) => Math.floor(x) === x;
-const builtinRand: BuiltInFunction = (min: EnvObj, max: EnvObj) => {
-    if (!min && !max) {
-        return new NumberObj(Math.random());
-    }
-    if (min && min.Type() !== EnvObjType.NUMBER) {
-        return new ErrorObj(
-            `(min) expected NUMBER got ${min.Type().toString()}`
-        );
-    }
-    if (max && max.Type() !== EnvObjType.NUMBER) {
-        return new ErrorObj(
-            `(max) expected NUMBER got ${max.Type().toString()}`
-        );
-    }
-    let minValue = 0;
-    let maxValue = 0;
-    if (!max) {
-        maxValue = (min as NumberObj).Value;
-    } else {
-        minValue = (min as NumberObj).Value;
-        maxValue = (max as NumberObj).Value;
-    }
-    let result;
-    if (isInt(minValue) && isInt(maxValue)) {
-        result = Math.floor(Math.random() * (maxValue - minValue) + minValue);
-    } else {
-        result = Math.random() * (maxValue - minValue) + minValue;
-    }
-
-    return new NumberObj(result);
+const builtinRand: BuiltInFunction = () => {
+    return new NumberObj(Math.random());
 };
 
 const builtinMax: BuiltInFunction = (
@@ -118,19 +89,18 @@ const builtinLog: BuiltInFunction = (input1: EnvObj) => {
     return new NumberObj(Math.log(num1.Value));
 };
 
-let rng = seedrandom(1234567);
-const builtinFixedRandom: BuiltInFunction = () => {
-    return new NumberObj(rng());
-};
-const builtinSeedFixedRandom: BuiltInFunction = (seed: EnvObj) => {
-    if (
-        seed?.Type() !== EnvObjType.NUMBER &&
-        seed?.Type() !== EnvObjType.STRING
-    ) {
-        return new ErrorObj('invalid input type');
+const builtinRng: BuiltInFunction = (seed?: EnvObj) => {
+    if (seed) {
+        if (
+            seed?.Type() !== EnvObjType.NUMBER &&
+            seed?.Type() !== EnvObjType.STRING
+        ) {
+            return new ErrorObj('invalid seed input type');
+        }
     }
-    rng = seedrandom((seed as NumberObj | StringObj).Value);
-    return NULL;
+    const newRng = seedrandom((seed as NumberObj | StringObj).Value);
+    const rngFn = () => new NumberObj(newRng());
+    return new BuiltInFunctionObj(rngFn);
 };
 
 const builtinMathEval: BuiltInFunction = (
@@ -276,11 +246,7 @@ builtins.set('null', NULL);
 builtins.set('undefined', UNDEFINED);
 builtins.set('NaN', NAN);
 builtins.set('random', new BuiltInFunctionObj(builtinRand));
-builtins.set('fixedrandom', new BuiltInFunctionObj(builtinFixedRandom));
-builtins.set(
-    'seed_fixed_random',
-    new BuiltInFunctionObj(builtinSeedFixedRandom)
-);
+builtins.set('rng', new BuiltInFunctionObj(builtinRng));
 builtins.set('json', new BuiltInFunctionObj(builtinJSON));
 builtins.set('string', new BuiltInFunctionObj(builtinToString));
 builtins.set('number', new BuiltInFunctionObj(builtinToNumber));

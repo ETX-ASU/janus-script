@@ -39,7 +39,8 @@ test('lexer nextToken', (t) => {
     let bingo = "\\sqrt[3]{}";
     let json = "{\\"json\\":1}";
     let nest = [[1,2],[3,4]];
-    let ifs = fn(v) { if(v == 1) { return 2; } if (v == 2) { return 3; } return 4; };`;
+    let ifs = fn(v) { if(v == 1) { return 2; } if (v == 2) { return 3; } return 4; };
+    2^3;`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -269,6 +270,10 @@ test('lexer nextToken', (t) => {
         [TokenType.NUMBER, '4'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.RBRACE, '}'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.NUMBER, '2'],
+        [TokenType.CARET, '^'],
+        [TokenType.NUMBER, '3'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];
