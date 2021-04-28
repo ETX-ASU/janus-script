@@ -133,6 +133,9 @@ const builtinToString: BuiltInFunction = (value: EnvObj) => {
 };
 
 const builtinToNumber: BuiltInFunction = (value: EnvObj) => {
+    if (value?.Type() === EnvObjType.NUMBER) {
+        return value;
+    }
     if (value?.Type() !== EnvObjType.STRING) {
         return new ErrorObj('invalid input type, expects STRING');
     }
