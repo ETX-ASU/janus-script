@@ -45,7 +45,11 @@ export class Environment {
         return obj;
     }
 
-    public Set(name: string, value) {
+    public Set(name: string, value: EnvObj) {
+        const current = this.store.get(name);
+        if (current && current.Equals(value)) {
+            return current;
+        }
         this.store.set(name, value);
         const changedKeys = new Set();
         changedKeys.add(name);
@@ -55,7 +59,9 @@ export class Environment {
                 changedKeys.add(bound);
             }
         });
-        this.events.emit('change', { changed: Array.from(changedKeys) });
+        if (changedKeys.size > 0) {
+            this.events.emit('change', { changed: Array.from(changedKeys) });
+        }
         return value;
     }
 
