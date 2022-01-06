@@ -1,6 +1,6 @@
 {
   "name": "janus-script",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "scripting interpreter for project Janus",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",

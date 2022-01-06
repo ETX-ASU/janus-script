@@ -53,11 +53,21 @@ export class Environment {
         this.store.set(name, value);
         const changedKeys = new Set();
         changedKeys.add(name);
+        const recursebindings = (n: string) => {
+            const found = [];
+            this.alias.forEach((boundTo, bound) => {
+                if (boundTo === n) {
+                    found.push(bound);
+                    found.push(...recursebindings(bound));
+                }
+            });
+
+            return found;
+        };
         // also check bindings
-        this.alias.forEach((boundTo, bound) => {
-            if (boundTo === name) {
-                changedKeys.add(bound);
-            }
+        const bindingChanges = recursebindings(name);
+        bindingChanges.forEach((key) => {
+            changedKeys.add(key);
         });
         if (changedKeys.size > 0) {
             this.events.emit('change', { changed: Array.from(changedKeys) });
@@ -101,8 +111,15 @@ export class Environment {
     }
 
     public Bind(name: string, to: string) {
+        if (this.alias.has(to)) {
+            // make sure there are no loops
+            const boundTo = this.alias.get(to);
+            if (boundTo === name) {
+                return new ErrorObj(`Cannot bind: ${to} is already bound to ${name}, no looping allowed.`);
+            }
+        }
         this.alias.set(name, to);
-        this.events.emit('change', { changed: [name] });
+        /* this.events.emit('change', { changed: [name] }); */
         return this.Get(to);
     }
 
@@ -111,7 +128,6 @@ export class Environment {
             return new ErrorObj(`Identifier ${name} has not been bound.`);
         }
         this.alias.delete(name);
-        this.events.emit('change', { changed: [name] });
         return NULL;
     }
 

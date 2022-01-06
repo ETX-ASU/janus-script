@@ -100,21 +100,25 @@ export class Evaluator {
                         // by clearing first
                         env.Clear(stmt.Name.Value.toString());
                     }
-                    env.Bind(stmt.Name.Value.toString(), stmt.Value.toString());
-                } else {
-                    if (env.isBound(stmt.Name.Value.toString())) {
-                        return new ErrorObj(
-                            `Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`
-                        );
+                    const bindResult = env.Bind(
+                        stmt.Name.Value.toString(),
+                        stmt.Value.toString()
+                    );
+                    if (this.isError(bindResult)) {
+                        return bindResult;
                     }
+                } else {
                     // only block overwrite on the global scope
                     if (
                         !env.hasOuter() &&
                         builtins.has(stmt.Name.Value.toString())
                     ) {
-                        return new ErrorObj(
+                        return this.newError(
                             `Identifier ${stmt.Name.Value} is builtin reserved reference, cannot assign.`
                         );
+                    }
+                    if (env.isBound(stmt.Name.Value.toString())) {
+                        env.Unbind(stmt.Name.Value.toString());
                     }
                     const value = this.eval(stmt.Value as AstNode, env);
                     if (this.isError(value)) {
