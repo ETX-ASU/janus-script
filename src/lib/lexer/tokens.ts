@@ -8,10 +8,12 @@ export enum TokenType {
     // Operators
     ASSIGN = 'ASSIGN',
     ASSIGN_REF = 'ASSIGN_REF',
+    ASSIGN_ANCHOR = 'ASSIGN_ANCHOR',
     PLUS = '+',
     MINUS = '-',
     SLASH = '/',
     BANG = '!',
+    HASH = '#',
     GT = '>',
     LT = '<',
     ASTERISK = '*',

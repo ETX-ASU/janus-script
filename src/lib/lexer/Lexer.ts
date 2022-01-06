@@ -69,6 +69,14 @@ export class Lexer {
                     token = newToken(TokenType.ILLEGAL, this.ch);
                 }
                 break;
+            case '#':
+                if (this.peekChar() === '=') {
+                    this.readChar();
+                    token = newToken(TokenType.ASSIGN_ANCHOR, '#=');
+                } else {
+                    token = newToken(TokenType.HASH, this.ch);
+                }
+                break;
             case ';':
                 token = newToken(TokenType.SEMICOLON, this.ch);
                 break;

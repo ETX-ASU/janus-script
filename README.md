@@ -34,14 +34,27 @@ Janus> c
 3
 ```
 
-Once an identifier is bound it can no longer be normally assigned. You can change the reference to another identifier, however trying to assign a value will result in an error.
+Identifiers can be "anchored" to the value of other identifiers using `#=` the identifier that you want to anchor to does not need to exist before it can be anchored.
+Anchors differ from bindings in that they do not trigger change events, nor do they reflect in the environment dump (toObj).
 
-To remove the binding or any other value you can use the `delete` command.
+```
+let c #= a;
+let a = 3;
+let b #= a;
+
+//...
+Janus> b
+3
+Janus> c
+3
+```
+
+To remove a binding, anchor, or any other value you can use the `delete` command.
 
 ```
 let a = 3;
 let b &= a;
-let b = 7; // ERROR
+let b = 7;
 delete b;
 let b = 7; // OK
 ```

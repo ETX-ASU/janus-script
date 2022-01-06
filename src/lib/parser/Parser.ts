@@ -206,7 +206,11 @@ export class Parser {
             stmt.IsRef = true;
         }
 
-        if (!this.expectPeek([TokenType.ASSIGN, TokenType.ASSIGN_REF])) {
+        if (this.peekTokenIs(TokenType.ASSIGN_ANCHOR)) {
+            stmt.IsAnchor = true;
+        }
+
+        if (!this.expectPeek([TokenType.ASSIGN, TokenType.ASSIGN_REF, TokenType.ASSIGN_ANCHOR])) {
             return null;
         }
 

@@ -95,7 +95,7 @@ export class Evaluator {
             case AstNodeType.LetStatement: {
                 const stmt = node as LetStatement;
                 if (stmt.IsRef) {
-                    if (env.isSet(stmt.Name.Value.toString())) {
+                    if (env.isSet(stmt.Name.Value.toString()) || env.isAnchored(stmt.Name.Value.toString())) {
                         // Get takes the store as precedence, so this we should overwrite
                         // by clearing first
                         env.Clear(stmt.Name.Value.toString());
@@ -106,6 +106,19 @@ export class Evaluator {
                     );
                     if (this.isError(bindResult)) {
                         return bindResult;
+                    }
+                } else if (stmt.IsAnchor) {
+                    if (env.isSet(stmt.Name.Value.toString()) || env.isBound(stmt.Name.Value.toString())) {
+                        // Get takes the store as precedence, so this we should overwrite
+                        // by clearing first
+                        env.Clear(stmt.Name.Value.toString());
+                    }
+                    const anchorResult = env.Anchor(
+                        stmt.Name.Value.toString(),
+                        stmt.Value.toString()
+                    );
+                    if (this.isError(anchorResult)) {
+                        return anchorResult;
                     }
                 } else {
                     // only block overwrite on the global scope
@@ -119,6 +132,9 @@ export class Evaluator {
                     }
                     if (env.isBound(stmt.Name.Value.toString())) {
                         env.Unbind(stmt.Name.Value.toString());
+                    }
+                    if (env.isAnchored(stmt.Name.Value.toString())) {
+                        env.Unanchor(stmt.Name.Value.toString());
                     }
                     const value = this.eval(stmt.Value as AstNode, env);
                     if (this.isError(value)) {

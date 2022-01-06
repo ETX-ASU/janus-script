@@ -40,7 +40,8 @@ test('lexer nextToken', (t) => {
     let json = "{\\"json\\":1}";
     let nest = [[1,2],[3,4]];
     let ifs = fn(v) { if(v == 1) { return 2; } if (v == 2) { return 3; } return 4; };
-    2^3;`;
+    2^3;
+    let bee #= a;`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -274,6 +275,11 @@ test('lexer nextToken', (t) => {
         [TokenType.NUMBER, '2'],
         [TokenType.CARET, '^'],
         [TokenType.NUMBER, '3'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.LET, 'let'],
+        [TokenType.IDENT, 'bee'],
+        [TokenType.ASSIGN_ANCHOR, '#='],
+        [TokenType.IDENT, 'a'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];

@@ -6,6 +6,8 @@ import { NULL } from '../eval/builtin';
 export class Environment {
     private store: Map<string, EnvObj> = new Map();
     private alias: Map<string, string> = new Map();
+    // anchors are used like "silent" aliases, they do not reflect in toObj and do not fire change events
+    private anchors: Map<string, string> = new Map();
     private outer: Environment | null = null;
 
     private events = new EventEmitter();
@@ -37,6 +39,9 @@ export class Environment {
         let obj = this.store.get(name);
         if (!obj && this.alias.has(name)) {
             obj = this.Get(this.alias.get(name));
+        }
+        if (!obj && this.anchors.has(name)) {
+            obj = this.Get(this.anchors.get(name));
         }
         if (!obj && this.outer) {
             obj = this.outer.Get(name);
@@ -104,6 +109,9 @@ export class Environment {
             });
             this.alias.delete(name);
         }
+        if (this.anchors.has(name)) {
+            this.anchors.delete(name);
+        }
         if (change) {
             this.events.emit('change', { changed: Array.from(changedKeys) });
         }
@@ -115,7 +123,9 @@ export class Environment {
             // make sure there are no loops
             const boundTo = this.alias.get(to);
             if (boundTo === name) {
-                return new ErrorObj(`Cannot bind: ${to} is already bound to ${name}, no looping allowed.`);
+                return new ErrorObj(
+                    `Cannot bind: ${to} is already bound to ${name}, no looping allowed.`
+                );
             }
         }
         this.alias.set(name, to);
@@ -133,6 +143,36 @@ export class Environment {
 
     public isBound(name: string) {
         return this.alias.has(name);
+    }
+
+    public Anchor(name: string, to: string) {
+        if (this.anchors.has(to)) {
+            // make sure there are no loops
+            const boundTo = this.anchors.get(to);
+            if (boundTo === name) {
+                return new ErrorObj(
+                    `Cannot anchor: ${to} is already anchored to ${name}, no looping allowed.`
+                );
+            }
+        }
+        this.anchors.set(name, to);
+        return NULL;
+    }
+
+    public Unanchor(name: string) {
+        if (!this.isAnchored(name)) {
+            return new ErrorObj(`Identifier ${name} has not been anchored.`);
+        }
+        this.anchors.delete(name);
+        return NULL;
+    }
+
+    public isAnchored(name: string) {
+        return this.anchors.has(name);
+    }
+
+    public isAssigned(name: string) {
+        return this.isSet(name) || this.isBound(name) || this.isAnchored(name);
     }
 
     public toObj() {

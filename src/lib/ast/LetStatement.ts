@@ -8,7 +8,8 @@ export class LetStatement implements Statement {
         private _token?: Token,
         private _name?: Identifier,
         private _value?: Expression,
-        private _isRef = false
+        private _isRef = false,
+        private _isAnchor = false
     ) {}
     nodeType: AstNodeType = AstNodeType.LetStatement;
     nodeCategory: AstNodeCategory = AstNodeCategory.Statement;
@@ -45,11 +46,26 @@ export class LetStatement implements Statement {
         this._isRef = val;
     }
 
+    set IsAnchor(val) {
+        this._isAnchor = val;
+    }
+
+    get IsAnchor() {
+        return this._isAnchor;
+    }
+
     tokenLiteral(): string {
         return this._token?.literal || '';
     }
 
     toString(): string {
-        return `${this.tokenLiteral()} ${this.Name?.toString()} ${this.IsRef ? '&=': '='} ${this.Value?.toString()};`;
+        let assignToken = '=';
+        if (this._isRef) {
+            assignToken = '&=';
+        }
+        if (this._isAnchor) {
+            assignToken = '#=';
+        }
+        return `${this.tokenLiteral()} ${this.Name?.toString()} ${assignToken} ${this.Value?.toString()};`;
     }
 }
