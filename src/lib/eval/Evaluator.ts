@@ -131,7 +131,10 @@ export class Evaluator {
                         );
                     }
                     if (env.isBound(stmt.Name.Value.toString())) {
-                        env.Unbind(stmt.Name.Value.toString());
+                        // env.Unbind(stmt.Name.Value.toString());
+                        return this.newError(
+                            `Identifier ${stmt.Name.Value} is a bound reference, cannot assign.`
+                        );
                     }
                     if (env.isAnchored(stmt.Name.Value.toString())) {
                         env.Unanchor(stmt.Name.Value.toString());
