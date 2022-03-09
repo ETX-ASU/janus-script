@@ -41,7 +41,8 @@ test('lexer nextToken', (t) => {
     let nest = [[1,2],[3,4]];
     let ifs = fn(v) { if(v == 1) { return 2; } if (v == 2) { return 3; } return 4; };
     2^3;
-    let bee #= a;`;
+    let bee #= a;
+    .003;`;
 
     const expected = [
         [TokenType.LET, 'let'],
@@ -280,6 +281,8 @@ test('lexer nextToken', (t) => {
         [TokenType.IDENT, 'bee'],
         [TokenType.ASSIGN_ANCHOR, '#='],
         [TokenType.IDENT, 'a'],
+        [TokenType.SEMICOLON, ';'],
+        [TokenType.NUMBER, '.003'],
         [TokenType.SEMICOLON, ';'],
         [TokenType.EOF, '']
     ];
