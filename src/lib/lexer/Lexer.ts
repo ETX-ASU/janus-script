@@ -150,7 +150,7 @@ export class Lexer {
                     const identifier = this.readIdentifier();
                     token = newToken(lookupIdentifier(identifier), identifier);
                     return token;
-                } else if (isDigit(this.ch)) {
+                } else if (isDigit(this.ch) || (this.ch === '.' && isDigit(this.peekChar()))) {
                     const number = this.readNumber();
                     token = newToken(TokenType.NUMBER, number);
                     return token;
