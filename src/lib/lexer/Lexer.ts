@@ -194,7 +194,7 @@ export class Lexer {
         do {
             this.readChar();
             if (!(isDigit(this.ch) || this.ch === '.')) {
-                if (!e && this.ch === 'e') {
+                if (!e && (this.ch === 'e' || this.ch === 'E')) {
                     e = true;
                 } else if (e) {
                     if (!(this.ch === '-' || this.ch === '+' || isDigit(this.ch))) {
