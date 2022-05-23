@@ -268,7 +268,5 @@ builtins.set('Math.SQRT1_2', new NumberObj(Math.SQRT1_2));
 builtins.set('Math.log', new BuiltInFunctionObj(builtinLog));
 builtins.set('Math.max', new BuiltInFunctionObj(builtinMax));
 builtins.set('Math.min', new BuiltInFunctionObj(builtinMin));
-builtins.set('max', new BuiltInFunctionObj(builtinMax));
-builtins.set('min', new BuiltInFunctionObj(builtinMin));
 builtins.set('Math.round', new BuiltInFunctionObj(builtinRound));
 builtins.set('Math.evaluate', new BuiltInFunctionObj(builtinMathEval));

@@ -70,6 +70,8 @@ const std_funcs = `
     let trans = fn(matrix) {
         return array(Math.evaluate("transpose(" + string(matrix) + ")"));
     };
+    let max = Math.max;
+    let min = Math.min;
 `;
 
 module.exports = { std: std_funcs };
